@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berry & Banter Recipe Book</title>
+<!-- Load Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Configure Tailwind to use custom font -->
+<script>
+tailwind.config = {
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'sans-serif'],
+serif: ['Playfair Display', 'serif'],
+},
+colors: {
+'blue-900': '#1e3a8a',
+'blue-700': '#1d4ed8',
+'blue-500': '#3b82f6',
+'blue-100': '#dbeafe',
+'pink-100': '#fce7f3',
+'pink-50': '#fdf2f8',
+'amber-400': '#fcd34d',
+'amber-500': '#f59e0b',
+}
+}
+}
+}
+</script>
+<style>
+/* Custom CSS for the smooth collapse transition */
+.collapsible-details {
+max-height: 0;
+opacity: 0;
+overflow: hidden;
+transition: max-height 0.7s ease-in-out, opacity 0.7s ease-in-out, padding-top 0.7s ease-in-out;
+}
+
+.collapsible-details.open {
+max-height: 1200px; /* Large enough value to cover content */
+opacity: 1;
+padding-top: 2rem;
+}
+
+/* Base styles for Lucide icons (using SVG approach in JS) */
+.icon {
+display: inline-block;
+width: 1em;
+height: 1em;
+stroke-width: 2;
+stroke-linecap: round;
+stroke-linejoin: round;
+fill: none;
+stroke: currentColor;
+}
+</style>
+</head>
+<body class="font-sans">
+
+<div id="app" class="min-h-screen bg-gradient-to-br from-pink-100 via-pink-50 to-blue-50 p-6 sm:p-12 text-blue-900 relative">
+<!-- Header with Hero Section -->
+<header class="text-center mb-16 max-w-4xl mx-auto z-10 relative">
+<div class="flex flex-col items-center justify-center mb-8">
+<div class="p-4 bg-blue-700 rounded-full mb-5 shadow-xl">
+<!-- Utensils Icon SVG -->
+<svg class="icon text-white" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 4 4 1 1 4-1 4-4 1-2 4-2-4-4-1-1-4 1-4 4-1z"/><path d="M5 22h14"/></svg>
+</div>
+<h1 class="text-7xl font-serif font-extrabold tracking-tighter text-blue-900 mb-4 drop-shadow-md">
+Berry & Banter
+</h1>
+<div class="h-1.5 w-32 bg-amber-500 mt-2 mb-6 mx-auto"></div>
+<p class="text-xl font-light italic text-blue-700 max-w-2xl">
+A curated collection of delightful recipes, crafted for joy and shared with love.
+</p>
+</div>
+
+<!-- Search Bar Implementation -->
+<div class="relative max-w-2xl mx-auto p-4 bg-white/70 backdrop-blur-sm rounded-xl shadow-lg ring-2 ring-blue-300/50">
+<!-- Search Icon SVG -->
+<svg class="icon absolute left-6 top-1/2 transform -translate-y-1/2 w-6 h-6 text-blue-400" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+
+<input
+type="text"
+id="search-input"
+placeholder="Search for a dish, ingredient, or cuisine..."
+class="w-full p-4 pl-14 pr-6 bg-white border border-blue-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-150 text-blue-800 placeholder-blue-400 shadow-sm text-lg"
+/>
+</div>
+</header>
+
+<main id="recipe-list" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 z-10 relative">
+<!-- Recipe cards will be injected here by JavaScript -->
+</main>
+
+<footer class="mt-20 text-center text-sm tracking-widest uppercase text-blue-400 border-t border-blue-200 pt-10 max-w-4xl mx-auto z-10 relative">
+<p>&copy; 2024 Berry & Banter. All rights reserved.</p>
+<!-- Updated footer text to reflect images and links are removed -->
+<p class="mt-2 text-xs">Aesthetics optimized for content focus.</p>
+</footer>
+</div>
+
+<script>
+// --- Data ---
+// 'image' and 'link' fields have been removed from all recipes.
+const initialRecipes = [
+{
+id: 1,
+title: "Classic Fluffy Pancakes",
+description: "The perfect recipe for light, fluffy, and delicious breakfast pancakes. Ready in minutes!",
+prepTime: "5 mins",
+cookTime: "15 mins",
+servings: 4,
+ingredients: [
+"1 ½ cups all-purpose flour", "3 ½ teaspoons baking powder", "1 teaspoon salt", "1 tablespoon white sugar",
+"1 ¼ cups milk (whole milk recommended)", "1 egg", "3 tablespoons melted butter"
+],
+instructions: [
+"In a large bowl, sift together the flour, baking powder, salt, and sugar.",
+"In a separate bowl, whisk together the milk and egg. Pour in the melted butter.",
+"Pour the wet ingredients into the dry ingredients and mix until just combined. Do not overmix; a few lumps are fine.",
+"Heat a lightly oiled griddle or large pan over medium-high heat. Pour the batter onto the griddle, using about 1/4 cup for each pancake.",
+"Cook for about 2-3 minutes per side, or until golden brown. Serve immediately with syrup and toppings of your choice."
+]
+},
+{
+id: 2,
+title: "Simple Tomato Pasta (Marinara)",
+description: "A quick, robust, and classic pasta sauce that can be made with pantry staples.",
+prepTime: "10 mins",
+cookTime: "25 mins",
+servings: 4,
+ingredients: [
+"1 pound spaghetti or linguine", "1 (28 ounce) can crushed tomatoes", "4 cloves garlic, minced",
+"¼ cup olive oil", "1 teaspoon dried oregano", "½ teaspoon red pepper flakes (optional)",
+"Salt and pepper to taste", "Fresh basil for garnish"
+],
+instructions: [
+"Cook pasta according to package directions. Reserve about 1 cup of the pasta water before draining.",
+"While pasta cooks, heat olive oil in a large saucepan over medium heat. Add garlic and red pepper flakes (if using) and sauté until fragrant (about 1 minute).",
+"Pour in the crushed tomatoes and stir in the oregano, salt, and pepper.",
+"Bring the sauce to a simmer, then reduce heat and cook for 15-20 minutes, stirring occasionally.",
+"Add the drained pasta directly to the sauce. Add a splash of the reserved pasta water to reach your desired consistency.",
+"Garnish with fresh basil and serve immediately."
+]
+},
+{
+id: 3,
+title: "Homemade Guacamole",
+description: "Fresh, creamy, and flavorful guacamole—perfect for dipping or spreading.",
+prepTime: "10 mins",
+cookTime: "0 mins",
+servings: 6,
+ingredients: [
+"3 ripe Hass avocados", "1 small red onion, finely diced", "1 serrano pepper, finely minced (remove seeds for less heat)",
+"2 tablespoons fresh lime juice", "1/2 cup chopped cilantro", "Salt and black pepper to taste"
+],
+instructions: [
+"Halve the avocados, remove the pits, and scoop the flesh into a medium bowl.",
+"Mash the avocados to your desired consistency. Some lumps are fine for texture.",
+"Add the diced red onion, minced serrano pepper, lime juice, and cilantro.",
+"Gently stir to combine all ingredients, being careful not to over-mix.",
+"Season generously with salt and pepper. Taste and adjust lime or salt as needed.",
+"Serve immediately with tortilla chips, or cover and chill for up to 2 hours."
+]
+},
+{
+id: 4,
+title: "The Dark Chocolate & Pistachio Luxury Bar",
+description: "An elegant, homemade chocolate bar featuring a creamy pistachio filling and crunchy toasted Knafeh pastry.",
+prepTime: "25 mins",
+cookTime: "8-10 mins",
+servings: "1 Large Bar",
+ingredients: [
+"High-Quality Dark Chocolate (60-75% cocoa): 10 oz (275g), chopped or callets.",
+"Knafeh/Kataifi Pastry (Shredded Phyllo Dough): 4 oz (115g), chopped into 1/2-inch pieces.",
+"Unsalted Butter or Ghee: 3 Tbsp (45g), for toasting.",
+"Pistachio Cream/Spread: 8 oz (225g), high-quality jarred or homemade.",
+"Tahini (Sesame Paste): 1 Tbsp (15g), to balance sweetness.",
+"Fine Sea Salt: Pinch, to enhance flavor."
+],
+instructions: [
+"TOAST KNAFEH: Melt butter/ghee in a skillet over medium heat. Add chopped knafeh and stir continuously for 8-10 minutes until deep golden brown and crispy. Transfer to a plate and cool completely.",
+"MAKE FILLING: In a bowl, combine the Pistachio Cream, Tahini, and salt. Stir until smooth. Gently fold in the cooled, crispy knafeh until evenly coated. Set aside.",
+"MELT CHOCOLATE: Gently melt the dark chocolate using a double boiler or microwave (stirring frequently).",
+"COAT MOLD: Pour enough melted chocolate into your bar mold (or lined pan) to create a thin layer on the bottom and up the sides. Chill for 10-15 minutes until fully set.",
+"FILL AND SEAL: Remove the chilled shell. Spoon the Pistachio & Knafeh filling into the shell, pressing lightly and evenly, leaving about 1/4 inch of space at the top.",
+"FINISH: Pour the remaining melted chocolate over the filling to seal the bar shut. Smooth the top with a spatula.",
+"FINAL CHILL: Refrigerate the bar for at least 2 hours or until the chocolate is completely hard and set before carefully unmolding."
+]
+},
+{
+id: 5,
+title: "Homemade Vanilla Latte",
+description: "A simple, comforting, and sweet homemade latte featuring frothed milk and a touch of vanilla.",
+prepTime: "3 mins",
+cookTime: "7 mins",
+servings: "1 serving",
+ingredients: [
+"Whole Milk (or preferred alternative): 1 cup (240ml), for the perfect foam.",
+"Instant Coffee Powder or Granules: 1 Tbsp (or 1.5 tsp), adjust strength to taste.",
+"Organic Cane Sugar (or substitute): 1 tsp (5g), adjust to taste.",
+"Pure Vanilla Extract: ¼ tsp"
+],
+instructions: [
+"Combine Ingredients: Pour the milk into a small pot. Stir in the instant coffee powder, sugar, and vanilla extract.",
+"Heat and Dissolve: Heat the mixture on medium-low, stirring continuously until the coffee and sugar are completely dissolved and the milk is steaming hot (do not let it boil).",
+"Froth: Pour the hot liquid into your serving cup. Use a handheld frother to create a creamy foam on top (about 30 seconds).",
+"Enjoy your latte!"
+]
+}
+];
+
+// --- Utility Functions (SVG Icons) ---
+
+/** Generates an SVG string for a Lucide icon */
+function getIcon(name, size = 20, className = '') {
+const icons = {
+// ExternalLink icon removed as links are removed
+'ChevronDown': '<path d="m6 9 6 6 6-6"/>',
+'ChevronUp': '<path d="m18 15-6-6-6 6"/>',
+'Clock': '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+'Utensils': '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M15 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M22 14H3"/><path d="M17 22H7"/>',
+'List': '<line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3" y1="6" y2="6"/><line x1="3" x2="3" y1="12" y2="12"/><line x1="3" x2="3" y1="18" y2="18"/>',
+'ChefHat': '<path d="M17 21h-2a4 4 0 0 1-4-4V5a2 2 0 0 1 2-2h4a2 4 0 0 1 2 2v12a4 4 0 0 1-4 4zM3 13h18"/><path d="M12 17h0"/>', // Simplified chef hat for the list
+};
+
+return `<svg class="icon ${className}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name] || ''}</svg>`;
+}
+
+
+// --- Core Application Logic ---
+
+/** Toggles the visibility of a recipe's detailed section. */
+function toggleDetails(recipeId) {
+const detailsElement = document.getElementById(`recipe-details-${recipeId}`);
+const buttonElement = document.getElementById(`toggle-button-${recipeId}`);
+
+if (detailsElement) {
+const isCollapsed = detailsElement.classList.contains('open');
+
+// Toggle the 'open' class for the CSS transition
+detailsElement.classList.toggle('open');
+
+// Update the button icon and rotation
+if (buttonElement) {
+const iconSvg = isCollapsed ? getIcon('ChevronDown', 24) : getIcon('ChevronUp', 24);
+buttonElement.innerHTML = iconSvg;
+// Removed the rotate-180 class toggle as it's not strictly necessary for chevron up/down
+buttonElement.setAttribute('aria-expanded', !isCollapsed);
+buttonElement.title = isCollapsed ? "Collapse Details" : "Expand Details";
+}
+}
+}
+
+/** Filters recipes based on the search term. */
+function filterRecipes(searchTerm) {
+const lowerCaseSearch = searchTerm.toLowerCase();
+
+return initialRecipes.filter(recipe => {
+// 1. Check title
+if (recipe.title.toLowerCase().includes(lowerCaseSearch)) return true;
+
+// 2. Check description
+if (recipe.description.toLowerCase().includes(lowerCaseSearch)) return true;
+
+// 3. Check ingredients
+const ingredientMatch = recipe.ingredients.some(ingredient =>
+ingredient.toLowerCase().includes(lowerCaseSearch)
+);
+if (ingredientMatch) return true;
+
+return false;
+});
+}
+
+/** Renders a single recipe card HTML structure (Simplified, no image or link). */
+function renderRecipeCard(recipe) {
+const cardHtml = `
+<div class="relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+<!-- Simple Header for Title and Description (Replaced Image Wrapper) -->
+<div class="p-6 pb-0 bg-white relative">
+<div class="flex flex-col">
+<h2 class="text-3xl font-serif font-bold text-blue-900 mb-1 leading-tight">
+${recipe.title}
+</h2>
+<p class="text-base font-light text-blue-700 italic max-w-lg leading-relaxed mb-4">
+${recipe.description}
+</p>
+</div>
+
+<!-- Expand/Collapse Button (positioned in the corner of the new header) -->
+<button
+id="toggle-button-${recipe.id}"
+onclick="toggleDetails(${recipe.id})"
+class="absolute top-6 right-6 p-2 rounded-full text-blue-700 hover:bg-blue-50 hover:text-blue-900 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10"
+aria-expanded="false"
+title="Expand Details"
+>
+${getIcon('ChevronDown', 24)}
+</button>
+</div>
+
+<!-- Collapsible Details -->
+<div
+id="recipe-details-${recipe.id}"
+class="collapsible-details bg-white"
+>
+<!-- Metadata -->
+<div class="flex justify-start items-center space-x-6 px-8 pb-6 text-sm tracking-wider uppercase text-blue-700 font-semibold border-b border-blue-100">
+<div class="flex items-center space-x-2">
+${getIcon('Clock', 16, 'text-blue-500')}
+<span>Prep: ${recipe.prepTime}</span>
+</div>
+<div class="flex items-center space-x-2">
+${getIcon('Clock', 16, 'text-blue-500')}
+<span>Cook: ${recipe.cookTime}</span>
+</div>
+<div class="flex items-center space-x-2">
+${getIcon('Utensils', 16, 'text-blue-500')}
+<span>Serves: ${recipe.servings}</span>
+</div>
+</div>
+
+<div class="p-8 grid md:grid-cols-2 gap-10">
+<!-- Ingredients Section -->
+<div>
+<h3 class="text-xl font-serif font-bold text-blue-800 mb-4 flex items-center border-b border-blue-200 pb-2">
+${getIcon('List', 20, 'mr-3 text-blue-600')}
+Ingredients
+</h3>
+<ul class="space-y-3">
+${recipe.ingredients.map((item, index) => `
+<li key="${index}" class="flex items-start text-blue-700 font-light leading-relaxed">
+<span class="text-blue-500 text-xs mr-3 mt-1.5">●</span>
+${item}
+</li>
+`).join('')}
+</ul>
+</div>
+
+<!-- Instructions Section -->
+<div>
+<h3 class="text-xl font-serif font-bold text-blue-800 mb-4 flex items-center border-b border-blue-200 pb-2">
+${getIcon('ChefHat', 20, 'mr-3 text-blue-600')}
+Method
+</h3>
+<ol class="space-y-6">
+${recipe.instructions.map((step, index) => `
+<li key="${index}" class="text-blue-700">
+<div class="flex">
+<span class="flex-shrink-0 w-7 h-7 rounded-full bg-blue-100 text-blue-800 text-sm font-bold flex items-center justify-center mr-3 mt-0.5 border border-blue-200">
+${index + 1}
+</span>
+<span class="font-light leading-relaxed">${step}</span>
+</div>
+</li>
+`).join('')}
+</ol>
+</div>
+</div>
+</div>
+</div>
+`;
+const wrapper = document.createElement('div');
+wrapper.innerHTML = cardHtml.trim();
+return wrapper.firstChild;
+}
+
+/** Main rendering function to update the DOM. */
+function renderRecipes() {
+const listContainer = document.getElementById('recipe-list');
+const searchTerm = document.getElementById('search-input').value;
+const filtered = filterRecipes(searchTerm);
+
+listContainer.innerHTML = ''; // Clear existing content
+
+if (filtered.length > 0) {
+filtered.forEach(recipe => {
+listContainer.appendChild(renderRecipeCard(recipe));
+});
+} else {
+// Display 'No results found' message
+listContainer.innerHTML = `
+<div class="md:col-span-full text-center p-16 bg-white/70 backdrop-blur-sm rounded-xl shadow-lg border border-dashed border-blue-300 text-blue-700">
+<p class="text-3xl font-serif text-blue-800 mb-4">
+Oops! No recipes found for "${searchTerm}"
+</p>
+<p class="text-lg font-light">Try adjusting your search or explore other delightful dishes.</p>
+</div>
+`;
+}
+}
+
+// --- Event Listeners and Initialization ---
+
+document.addEventListener('DOMContentLoaded', () => {
+const searchInput = document.getElementById('search-input');
+
+// Initial render
+renderRecipes();
+
+// Attach search input listener
+searchInput.addEventListener('input', renderRecipes);
+
+// Expose toggleDetails globally so it can be called from onclick handlers
+window.toggleDetails = toggleDetails;
+});
+
+</script>
+</body>
+</html>
